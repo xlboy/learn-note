@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习前端路由-hash实现方式</title>
+</head>
+<body>
+    <div id="routerView">
+        未初始化
+    </div>
+    <script>
+        const routerView = document.getElementById('routerView')
+        function onHashChange() {
+            const hash = location.hash
+            routerView.innerHTML = `当前的hash值为${hash}\n如两次URL地址相同，则会重新加载哦亲`
+        }
+        window.addEventListener('hashchange', onHashChange)
+    </script>
+</body>
+</html>

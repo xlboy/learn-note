@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习前端路由-history实现方式</title>
+</head>
+
+<body>
+    <button onclick="toPage('aaa')">跳转到A页面</button>
+    <button onclick="toPage('bbb')">跳转到B页面</button>
+    <button onclick="backPage">返回上一页</button>
+    <div id="routerView">
+
+    </div>
+    <script>
+        const routerView = document.getElementById('routerView')
+
+        function toPage(url) {
+            const routeState = { url, date: +new Date() }
+            // 未完待续
+            history.pushState(routeState, '', `${location.origin}/${url}`)
+        }
+        function backPage() {
+            console.log(history)
+        }
+        function onPopState() {
+            console.log('发生改变了')
+        }
+        window.addEventListener('popstate', onPopState)
+    </script>
+</body>
+
+</html>
