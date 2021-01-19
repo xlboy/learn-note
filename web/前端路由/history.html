@@ -15,18 +15,21 @@
 
     </div>
     <script>
+        // 此测试需搭起一个服务进行，可用node中的live-server库快速搭起
         const routerView = document.getElementById('routerView')
 
         function toPage(url) {
             const routeState = { url, date: +new Date() }
-            // 未完待续
             history.pushState(routeState, '', `${location.origin}/${url}`)
+            handlePageChange(url)
         }
-        function backPage() {
-            console.log(history)
+
+        function handlePageChange(url) {
+            routerView.innerHTML = url
         }
-        function onPopState() {
-            console.log('发生改变了')
+
+        function onPopState(state) {
+            handlePageChange(`触发页面前进/后退啦，url=` + location.pathname)
         }
         window.addEventListener('popstate', onPopState)
     </script>
