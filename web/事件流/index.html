@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="div">
+        <button onclick="test2()">test2</button>
+    </div>
+    <script>
+        function test1(e) {
+            console.log('test1')
+            e.stopPropagation() // 停止事件往内捕获
+        }
+        function test2() {
+            console.log('test2')
+        }
+        div.addEventListener('click', test1, true)
+        // document中的addEventListener中的第三个参数则为冒泡或捕获
+        // true = 捕获， false = 冒泡，默认为false，冒泡，跟dom中注册事件一样的事件流形式
+    </script>
+</body>
+</html>
