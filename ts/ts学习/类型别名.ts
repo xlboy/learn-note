@@ -38,3 +38,12 @@ const test3: nb = {
     name: '',
     age: 1
 }
+
+// in映射一波 字符串字面量类型
+type wdn = {
+    [k in strType]: number
+}
+
+type wdnm = {
+    [k in keyof typeof test3]: string
+}
