@@ -22,7 +22,7 @@ obj.x = 10;
 obj.y = 20;
 obj.moveBy(5, 5);
 
-
+"use strict";
 interface MouseEvent {
   layerX: number;
 }
