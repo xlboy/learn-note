@@ -38,3 +38,14 @@ class nb implements test{
 }
 const n = new nb()
 type TY = typeof n
+
+
+
+// 使用typeof获取字面量类型
+const str = '我真的服了'
+
+type _str = typeof str
+// 此时的_str为'我真的服了'，而后可用来当属性名，或者字符串字面量
+let s: _str
+s = '我真的服了' // success
+// s = '我你爱你' // error

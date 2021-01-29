@@ -47,3 +47,23 @@ type wdn = {
 type wdnm = {
     [k in keyof typeof test3]: string
 }
+
+// 牛逼的索引签名配合
+/**
+ * demo: {
+ *     isPerson: boolean;
+ *     [k in strType]?: number;
+ *     [k: string]: number
+ * }
+ */
+type demo = { isPerson: boolean } &
+    {
+        [k in strType]?: number;
+    } &
+{
+    [k: string]: boolean
+}
+
+const foo: demo = {
+    isPerson: false,
+}
