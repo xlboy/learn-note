@@ -12,6 +12,8 @@ type Copy<T> = {
 
 type test3 = Copy<test>
 
+// K extends keyof T
+// K这个type字符字面量类型，默认继承于T拆开的所有属性名称中的部分
 type MyPick<T, K extends keyof T> = {
     [k in K]: T[k]
 }
