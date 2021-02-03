@@ -5,6 +5,7 @@ interface IComponentState {
 }
 
 let isInitialStatus = false
+let isPerformCall = false
 
 let activeComponentSym: Symbol | undefined
 let activeComponentHooks: any[]
@@ -61,15 +62,26 @@ function useState<T>(initialValue: T) {
     const _activeComponentSym = activeComponentSym
 
     const setState = (newVal: T) => {
-        if (_activeComponentSym) {
-            // 根据闭包留下的Sym,拿到集合中钩子 对应的 组件数据
-            const _componentMap = componentMap.get(_activeComponentSym)
-            if (_componentMap) {
-                // 将闭包那留下的标记Sym赋给全局，而后再进行组件构造函数调用
-                activeComponentSym = _activeComponentSym
-                _componentMap.hooks[_currentHooksIndex] = newVal
-                currentHookIndex = 0
-                _componentMap.structure()
+        if (!isInitialStatus) {
+            if (_activeComponentSym) {
+                // 根据闭包留下的Sym,拿到集合中钩子 对应的 组件数据
+                const _componentMap = componentMap.get(_activeComponentSym)
+                if (_componentMap) {
+                    // 将闭包那留下的标记Sym赋给全局，而后再进行组件构造函数调用
+                    activeComponentSym = _activeComponentSym
+                    _componentMap.hooks[_currentHooksIndex] = newVal
+                    currentHookIndex = 0
+                    new Promise<void>(_ => _()).then(_ => {
+                        if (!isPerformCall) {
+                            isPerformCall = true
+                            _componentMap.structure()
+                            // 好一个任务队列，有意思…
+                            new Promise<void>(_ => _()).then(_ => {
+                                isPerformCall = false
+                            })
+                        }
+                    })
+                }
             }
         }
         return newVal
