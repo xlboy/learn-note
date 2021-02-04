@@ -31,3 +31,12 @@ el.addEventListener('click', e => {
   e.layerX
   e.target
 })
+
+interface testThis<T> {
+  [k: string]: ThisType<T>
+}
+const demo: ThisType<{ num: number }> = {
+  a() {
+    this.num
+  }
+}

@@ -24,6 +24,16 @@ const AppComponent = () => {
     }, 1000);
 }
 
+const AppComponent2 = () => {
+    const [count, setCount] = useState(0)
+    const [size, setSize] = useState(Math.random())
+    console.log(`count2 -> ${count} ---- size2 -> ${size}`)
+    setTimeout(() => {
+        setCount(count + 1)
+        setSize(Math.random())
+    }, 1000);
+}
+
 // 初始化组件
 function initComponent(structure: Function) {
     isInitialStatus = true
@@ -97,3 +107,4 @@ function useState<T>(initialValue: T) {
 }
 
 initComponent(AppComponent)
+initComponent(AppComponent2)
