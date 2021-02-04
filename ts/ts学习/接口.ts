@@ -94,3 +94,13 @@ class c2 implements f2, f3 {
 
 
 
+// 我服了，还有这个操作……代替了命名空间似的
+
+interface Route {
+    keys: 'n' | 'b' | 'a';
+    age: number;
+}
+
+let a:Route['keys']
+
+a = 'a'
