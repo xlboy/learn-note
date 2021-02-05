@@ -44,7 +44,7 @@ type wdn = {
     [k in strType]: number
 }
 
-type wdnm = {
+export type wdnm = {
     [k in keyof typeof test3]: string
 }
 

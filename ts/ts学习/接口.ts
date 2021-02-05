@@ -104,3 +104,5 @@ interface Route {
 let a:Route['keys']
 
 a = 'a'
+
+import type { wdnm } from './类型别名';
