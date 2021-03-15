@@ -20,3 +20,25 @@ const tom: [string, boolean] = ['', false]
 tom.push('1')
 tom.push(true)
 // tom.push(1) // number -> error
+  
+type a = {
+  name: '小逼崽子'
+  ref: number
+}
+type b = {
+  name: '逼崽子'
+  color: string
+}
+
+type a_b = Array<a | b>
+
+let c: a_b = [
+  {
+    name: '小逼崽子',
+    ref: 1
+  },
+  {
+    name: '逼崽子',
+    color: ''
+  }
+]
