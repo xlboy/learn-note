@@ -202,3 +202,65 @@ type PromiseAllType = <A extends any[]>(
     [K in keyof A]: A[K] extends Promise<infer PVal> ? PVal : A[K];
   }
 >;
+
+/**
+ * 第十题
+ * Type Lookup
+ * 有时，您可能希望根据其属性在并集中查找类型。
+ * 在此挑战中，我们想通过在联合Cat | Dog中搜索公共type字段来获取相应的类型。换句话说，在以下示例中，我们期望LookUp<Dog | Cat, 'dog'>获得Dog，LookUp<Dog | Cat, 'cat'>获得Cat。
+ */
+
+interface Cat {
+  type: "cat";
+  breeds: "Abyssinian" | "Shorthair" | "Curl" | "Bengal";
+}
+
+interface Dog {
+  type: "dog";
+  breeds: "Hound" | "Brittany" | "Bulldog" | "Boxer";
+  color: "brown" | "white" | "black";
+}
+
+type MyDog = LookUp<Cat | Dog, "dog">; // expected to be `Dog`
+
+// 将K -> dog作为type的值,这里可以用键名又或者直接当值用…而后继承出后,会拿出对应的O来进行返回
+type LookUp<O extends object, K extends string> = O extends { type: K }
+  ? O
+  : never;
+
+/**
+ * 第十一题
+ * Trim Left
+ * 实现TrimLeft <T>，它采用精确的字符串类型，并返回一个新的字符串，其中空格开始删除。
+ */
+
+type trimed = TrimLeft<"  Hello World  ">; // expected to be 'Hello World  '
+// 我是真没想到，这里居然也可以用递归的思维去解…哈哈，真棒。
+type TrimLeft<S extends string> = S extends ` ${infer Val}` ? TrimLeft<Val> : S;
+
+/**
+ * 第十二题
+ * Trim
+ * 实现Trim <T>，它采用确切的字符串类型，并返回一个新字符串，该字符串的两端都删除了空格。
+ */
+
+type trimed2 = Trim<"  Hello World  ">; // expected to be 'Hello World'
+// 我是真没想到，这里居然也可以用递归的思维去解…哈哈，真棒。
+type Trim<S extends string> = S extends ` ${infer Val}`
+  ? Trim<Val>
+  : S extends `${infer Val} `
+  ? Trim<Val>
+  : S;
+
+/**
+ * 第十三题
+ * Capitalize
+ * 实现Capitalize <T>，它将字符串的第一个字母转换为大写，而其余部分保持原样。
+ */
+
+type capitalized = Capitalize1<"hello world">; // expected to be 'Hello world'
+
+// 字符模板中的占位，也跟函数的形参有点相似啊，infer Rest实则占完后面的...args那样，而前面就用单个字符占位，后面则为rest
+type Capitalize1<S extends string> = S extends `${infer StartChar}${infer Rest}`
+  ? `${Uppercase<StartChar>}${Rest}`
+  : S;
