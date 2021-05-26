@@ -121,3 +121,25 @@ type m_2 = MyMyExclude<KeyA, "c">;
 type GetPromiseValue<T> = T extends Promise<infer A> ? A : never;
 type Promise1 = Promise<string>; // Promise<string>
 type Promise1Type = GetPromiseValue<Promise1>; // string
+
+/**
+ * 第八题
+ * 实现一个utils如果它接受条件C，真实返回类型T和错误返回类型F。C应该是true或false，而T和F可以是任何类型。
+ */
+// 锻炼巩固extendsの一题
+type If<C extends boolean, T, F> = C extends true ? T : F;
+
+/**
+ * 第九题
+ * 在类型系统中实现JavaScript Array.concat函数。 类型接受两个参数。 输出应该是一个新数组，其中包含按ltr顺序输入的
+ */
+type Concat<A extends any[], B extends any[]> = [...A, ...B];
+type Result = Concat<[1, "3"], [2]>; // expected to be [1, 2]
+
+/**
+ * 第十题
+ * 在类型系统中实现JavaScript Array.includes函数。 类型接受两个参数。 输出应为布尔值true或false。
+ */
+type Includes<U extends any[], C> = C extends U[number] ? true : false
+type isPillarMen1 = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'> // expected to be `false`
+type isPillarMen2 = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Santana'> // expected to be `true`
