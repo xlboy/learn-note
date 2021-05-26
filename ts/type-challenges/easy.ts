@@ -1,4 +1,8 @@
 /**
+ * @description 简单难度的类型挑战，github地址 https://github.com/type-challenges/type-challenges
+ */
+
+/**
  * 第一题
  * 实现 Pick
  * 无需使用内置的Pick<T, K>泛型即可。  通过从K中选择属性T来构造类型
