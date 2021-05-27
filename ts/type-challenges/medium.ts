@@ -366,3 +366,21 @@ type Flatten2<A extends any[], OldArr extends any[] = []> = A extends [
     ? Flatten2<[...StartItem, ...RestItem], OldArr>
     : Flatten2<RestItem, [...OldArr, StartItem]>
   : OldArr;
+
+/**
+ * 第二十题
+ * Append to object
+ * 实现一种类型，将新字段添加到接口。 该类型采用三个参数。 输出应该是具有新字段的对象
+ */
+
+type Test = { id: "1" };
+type Result22 = AppendToObject<Test, "value", 4>; // expected to be { id: '1', value: 4 }
+// 啊啊啊啊啊啊 ，我太棒了吧
+type AppendToObject<
+  O extends object,
+  K extends string,
+  V extends any,
+  OKeys extends keyof O = keyof O
+> = {
+  [key in OKeys | K]: key extends OKeys ? O[key] : V;
+};
