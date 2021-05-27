@@ -264,3 +264,105 @@ type capitalized = Capitalize1<"hello world">; // expected to be 'Hello world'
 type Capitalize1<S extends string> = S extends `${infer StartChar}${infer Rest}`
   ? `${Uppercase<StartChar>}${Rest}`
   : S;
+
+/**
+ * 第十四题
+ * Replace
+ * 实现Replace <S，From，To>，将给定字符串S中的字符串替换
+ */
+
+type replaced = Replace<"types are fun!", "fun", "awesome">; // expected to be 'types are awesome!'
+
+type Replace<
+  SrouceStr extends string,
+  TargetStr extends string,
+  ResultStr extends string
+> = SrouceStr extends `${infer StartChar}${TargetStr}${infer Rest}`
+  ? `${StartChar}${ResultStr}${Rest}`
+  : never;
+
+/**
+ * 第十五题
+ * Replace
+ * 实现ReplaceAll <S，From，To>，将给定字符串S中的所有子字符串From替换为To
+ */
+
+type replaced2 = ReplaceAll<"t y p e s", " ", "">; // expected to be 'types'
+type ReplaceAll<
+  SrouceStr extends string,
+  TargetStr extends string,
+  ResultStr extends string
+> = SrouceStr extends `${infer StartChar}${TargetStr}${infer Rest}`
+  ? ReplaceAll<`${StartChar}${ResultStr}${Rest}`, TargetStr, ResultStr>
+  : SrouceStr;
+
+/**
+ * 第十六题
+ * 追加参数
+ * 实现一个范型 AppendArgument<Fn, A>，对于给定的函数类型 Fn，以及一个任意类型 A，返回一个新的函数 G。G 拥有 Fn 的所有参数并在末尾追加类型为 A 的参数。
+ */
+
+type Fn = (a: number, b: string) => number;
+
+type Result2 = AppendArgument<Fn, boolean>;
+// 期望是 (a: number, b: string, x: boolean) => number
+
+// ... Type，会将一个数组解成key -> value的样子…
+type AppendArgument<Fn extends Function, A> = Fn extends (
+  ...args: infer FnArgs
+) => infer ReturnType
+  ? (...args: [...FnArgs, A]) => ReturnType
+  : never;
+
+/**
+ * 第十七题
+ * Permutation
+ * 实现将联合类型转换为包含联合排列的数组的排列类型。
+ */
+// ['A', 'B', 'C'] | ['A', 'C', 'B'] | ['B', 'A', 'C'] |
+// ['B', 'C', 'A'] | ['C', 'A', 'B'] | ['C', 'B', 'A']
+type perm = Permutation<"A" | "B" | "C">;
+type Permutation<T, B = T> = [T] extends [never]
+  ? []
+  : // T extends T -> 'AAA' | 'BBB' | 'CCC' extends 本身的时候，会迭代下去。。AAA到BBB又到CCC
+  T extends T
+  ? // T extends T迭代时，当前值都抽出来安排在数组第一位，而后再将 当前值以外的值分割出来（Exclude）安排给自身
+    // 如若当前值以外的值分隔不出来，为never（Exclude割不出来即never）后，则到底了，返回[]回去告知已结束
+    [T, ...Permutation<Exclude<B, T>>]
+  : [];
+
+/**
+ * 第十八题
+ * Length of String
+ * 计算字符串文字的长度，其行为类似于String＃length。
+ */
+// 将开头的字符拆下来装进StrArray数组里,然后递归载入,直至最后获取数组的length长度…一个静态东西整出这么多花样,蛋疼
+type LengthOfString<StrSrouce extends string, StrArray extends string[] = []> =
+  StrSrouce extends `${infer StartChar}${infer RestChar}`
+    ? LengthOfString<RestChar, [...StrArray, StartChar]>
+    : StrArray["length"];
+
+type StrLength = LengthOfString<"xbzzo">;
+
+/**
+ * 第十九题
+ * Flatten
+ * 在此挑战中，您将需要编写一个接受数组并发出扁平化数组类型的类型。
+ */
+
+type flatten = Flatten<[1, 2, [3, 4], [[[5]]]]>; // [1, 2, 3, 4, 5]
+type flatten2 = Flatten2<[1, 2, [3, 4], [[[5, 6, [7, [8, [9]]]]]]]>; // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+type Flatten<A extends any[]> = A extends [infer StartItem, ...infer RestItem]
+  ? StartItem extends any[]
+    ? Flatten<[...StartItem, ...RestItem]>
+    : [StartItem, ...Flatten<RestItem>]
+  : A;
+
+type Flatten2<A extends any[], OldArr extends any[] = []> = A extends [
+  infer StartItem,
+  ...infer RestItem
+]
+  ? StartItem extends any[]
+    ? Flatten2<[...StartItem, ...RestItem], OldArr>
+    : Flatten2<RestItem, [...OldArr, StartItem]>
+  : OldArr;
