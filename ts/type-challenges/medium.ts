@@ -384,3 +384,277 @@ type AppendToObject<
 > = {
   [key in OKeys | K]: key extends OKeys ? O[key] : V;
 };
+
+/**
+ * 第二十一题
+ * Absolute
+ * 实现绝对类型。 一种采用字符串，数字或bigint的类型。 输出应为正数字符串
+ */
+type Test22 = -100;
+type Result222 = Absolute<Test22>; // expected to be "100"
+
+type Absolute<Val extends string | number | bigint> =
+  // 通过``模板字符串将number转成字符串，而后使用infer抽取出来截掉负号
+  `${Val}` extends `-${infer Num}` ? Num : `${Val}`;
+
+/**
+ * 第二十二题
+ * String to Union
+ * 实现String to Union类型。 键入take string参数。 输出应为输入字母的并集
+ */
+
+type Test33 = "123";
+type Result33 = StringToUnion<Test33>; // expected to be "1" | "2" | "3"
+
+type StringToUnion<Val extends string, Arr extends any[] = []> =
+  Val extends `${infer StartChar}${infer RestChar}`
+    ? StringToUnion<RestChar, [...Arr, StartChar]>
+    : Arr[number];
+
+/**
+ * 第二十三题
+ * Merge
+ * 将两种类型合并为新类型。 第二种类型的键将覆盖第一种类型的键。
+ */
+
+interface MergeType1 {
+  name: number;
+  age: string;
+  phone: number;
+}
+interface MergeType2 {
+  name: string;
+  age: number;
+}
+
+type MergeTest = Merge<MergeType1, MergeType2>;
+type Merge<T1 extends {}, T2 extends {}> = {
+  [k in keyof T1 | keyof T2]: k extends keyof T2
+    ? T2[k]
+    : k extends keyof T1
+    ? T1[k]
+    : never;
+};
+
+/**
+ * 第二十四题
+ * CamelCase
+ * for-bar-baz -> forBarBaz
+ */
+
+type CameCaseResult = CamelCase<"for-bar-baz">;
+
+type FirstLetterToCamelCase<Val extends string> =
+  Val extends `${infer StartChar}${infer RestVal}`
+    ? `${Uppercase<StartChar>}${RestVal}`
+    : Uppercase<Val>;
+type CamelCase<Val extends string> =
+  Val extends `${infer StartVal}-${infer RestVal}`
+    ? `${FirstLetterToCamelCase<StartVal>}${CamelCase<RestVal>}`
+    : FirstLetterToCamelCase<Val>;
+
+/**
+ * 第二十五题
+ * KebabCase
+ * FooBarBaz -> for-bar-baz
+ */
+
+type KebabCaseResult = KebabCase<"FooBarBaz">;
+type KebabCase<Val extends string, IsFirst extends boolean = true> =
+  Val extends `${infer StartChar}${infer RestVal}`
+    ? StartChar extends `${Uppercase<StartChar>}`
+      ? `${IsFirst extends true ? "" : "-"}${Lowercase<StartChar>}${KebabCase<
+          RestVal,
+          false
+        >}`
+      : `${StartChar}${KebabCase<RestVal, false>}`
+    : Val;
+
+/**
+ * 第二十四题
+ * Diff
+ * Get an Object that is the difference between O & O1
+ */
+
+interface O {
+  name: string;
+  age: number;
+  test: any;
+}
+interface O1 {
+  name: string;
+  age: number;
+  phone: number;
+  password: string;
+}
+
+type DiffResult = Diff<O, O1>;
+
+type Diff<
+  O extends {},
+  O1 extends {},
+  K extends keyof O = keyof O,
+  K1 extends keyof O1 = keyof O1
+> = {
+  [k in Exclude<K, K1> | Exclude<K1, K>]: k extends K
+    ? O[k]
+    : k extends K1
+    ? O1[k]
+    : never;
+};
+
+/**
+ * 第二十五题
+ * AnyOf
+ * 数组内的值 含有隐式转换，如若数组内全部元素为true，那则返回true
+ */
+
+type Sample1 = AnyOf<[1, "1", true, [], {}]>; // expected to be true.
+type Sample2 = AnyOf<[0, "", false, [], {}]>; // expected to be false.
+
+type VerifBool<R> = R extends 0
+  ? false
+  : R extends ""
+  ? false
+  : R extends false
+  ? false
+  : R extends []
+  ? true
+  : R extends {}
+  ? true
+  : true;
+
+type AnyOf<Arr extends Array<number | string | boolean | [] | {}>> =
+  Arr extends [infer StartItem, ...infer RestItem]
+    ? VerifBool<StartItem> extends true
+      ? [true, ...AnyOf<RestItem>] extends true[]
+        ? true
+        : false
+      : false
+    : [VerifBool<Arr>];
+
+/**
+ * 第二十六题
+ * IsNever
+ * 实现类型IsNever，它接受输入类型T。如果的类型解析为Never，则返回true，否则返回false。
+ */
+
+type A = IsNever<never>; // expected to be true
+type B = IsNever<undefined>; // expected to be false
+type C = IsNever<null>; // expected to be false
+type D = IsNever<[]>; // expected to be false
+type E = IsNever<number>; // expected to be false
+
+type IsNever<Val> = [Val] extends [never] ? true : false;
+
+/**
+ * 第二十七题
+ * 实现类型IsUnion，该类型接受输入类型T并返回T是否解析为联合类型。
+ */
+
+type case1 = IsUnion<string>; // false
+type case2 = IsUnion<string | number>; // true
+type case3 = IsUnion<[string | number]>; // false
+
+// 我
+type IsUnion<T, B = T> = T extends T
+  ? [Exclude<B, T>] extends [never]
+    ? false
+    : true
+  : never;
+// 他人，妙
+type IsUnion2<T, B = T> = T extends B
+  ? [B] extends [T]
+    ? false
+    : true
+  : never;
+
+/**
+ * 第二十八题
+ * ReplaceKeys
+ * 实现一个类型ReplaceKeys，它替换联合类型中的键，如果某个类型没有这个键，只需跳过替换，A类型有三个参数。
+ */
+
+type NodeA = {
+  type: "A";
+  name: string;
+  flag: number;
+};
+
+type NodeB = {
+  type: "B";
+  id: number;
+  flag: number;
+};
+
+type NodeC = {
+  type: "C";
+  name: string;
+  flag: number;
+};
+
+type Nodes = NodeA | NodeB | NodeC;
+
+// {type: 'A', name: number, flag: string} | {type: 'B', id: number, flag: string} | {type: 'C', name: number, flag: string}
+// would replace name from string to number, replace flag from number to string.
+type ReplacedNodes = ReplaceKeys<
+  Nodes,
+  "name" | "flag",
+  { name: number; flag: string }
+>;
+
+// {type: 'A', name: never} | NodeB | {type: 'C', name: never} // would replace name to never
+type ReplacedNotExistKeys = ReplaceKeys<Nodes, "name", { aa: number }>;
+
+type ReplaceKeys<Types extends {}, Keys, Srouces> = Types extends Types
+  ? {
+      [k in keyof Types]: k extends Keys
+        ? k extends keyof Srouces
+          ? Srouces[k]
+          : never
+        : Types[k];
+    }
+  : never;
+
+/**
+ * 第二十九题
+ * Remove Index Signature
+ * 实现RemoveIndexSignature <T>，从对象类型中排除索引签名。
+ */
+type Foo = {
+  [key: string]: any;
+  foo(): void;
+  name: string;
+};
+type BB = RemoveIndexSignature<Foo>; // expected { foo(): void }
+type RemoveIndexSignature<O extends {}> = {
+  [K in keyof O as string extends K
+    ? never
+    : number extends K
+    ? never
+    : K]: O[K];
+};
+
+/* 核心知识点如下↓↓↓↓↓↓↓↓↓↓↓↓↓↓ */
+
+
+
+
+type TestType = KeyAddTestStr<Foo>; // expected { foo-test(): void }
+type KeyAddTestStr<O extends {}> = {
+  // as符可用在静态类型中的in上，后面可跟上其他操作
+  [K in keyof O as K extends string ? `${K}-test` : K]: O[K];
+};
+
+// string原型不可能继承于原型下延伸的内容，简单点就是说“父亲怎么可能被儿子生出来”。。为false
+type aaaaaaaaaa = string extends "f" ? true : false;
+
+// 字符串因为是string原型下延伸的内容,所以继承判断有效,为true
+type bbbbbbbbb = "f" extends string  ? true : false;
+
+
+
+
+
+
+// type-challenges中级难度完成… 2021/5/29 0:29
