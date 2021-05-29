@@ -637,9 +637,6 @@ type RemoveIndexSignature<O extends {}> = {
 
 /* 核心知识点如下↓↓↓↓↓↓↓↓↓↓↓↓↓↓ */
 
-
-
-
 type TestType = KeyAddTestStr<Foo>; // expected { foo-test(): void }
 type KeyAddTestStr<O extends {}> = {
   // as符可用在静态类型中的in上，后面可跟上其他操作
@@ -651,10 +648,5 @@ type aaaaaaaaaa = string extends "f" ? true : false;
 
 // 字符串因为是string原型下延伸的内容,所以继承判断有效,为true
 type bbbbbbbbb = "f" extends string  ? true : false;
-
-
-
-
-
 
 // type-challenges中级难度完成… 2021/5/29 0:29
