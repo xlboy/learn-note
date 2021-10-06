@@ -46,4 +46,4 @@ type InUnionFillArrayItem<
   ? InUnionFillArrayItem<FillItem, Exclude<Union, C>, [...FillArray, FillItem]>
   : never;
 
-type TestResult = InUnionFillArrayItem<{ a: 1; c: 2 }, LocaleTypes>;
+type TestResult = InUnionFillArrayItem<{ a: 1; c: 2 }, LocaleTypes>; // [{ a: 1; c: 2 }, { a: 1; c: 2 }, { a: 1; c: 2 }]
