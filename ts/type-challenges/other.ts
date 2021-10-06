@@ -47,3 +47,79 @@ type InUnionFillArrayItem<
   : never;
 
 type TestResult = InUnionFillArrayItem<{ a: 1; c: 2 }, LocaleTypes>; // [{ a: 1; c: 2 }, { a: 1; c: 2 }, { a: 1; c: 2 }]
+
+/**
+ * 取模板字符串中指定的单个重复字符括住的内容，例取出 * 字符括住的内容： `123*912*112`，即912
+ */
+
+type GetStrOneCharRangeContent<
+  Str extends string,
+  Char extends string,
+  DefaultStr extends string = "",
+  ContentArray extends string[] = [],
+  IsRange extends boolean = false
+> = LengthOfString<Char> extends 1
+  ? Str extends `${infer S}${infer RestS}`
+    ? [S, IsRange] extends [Char, false]
+      ? GetStrOneCharRangeContent<RestS, Char, "", ContentArray, true>
+      : [S, IsRange] extends [Char, true]
+      ? GetStrOneCharRangeContent<
+          RestS,
+          Char,
+          ``,
+          [DefaultStr, ...ContentArray],
+          false
+        >
+      : IsRange extends true
+      ? GetStrOneCharRangeContent<
+          RestS,
+          Char,
+          `${DefaultStr}${S}`,
+          ContentArray,
+          true
+        >
+      : GetStrOneCharRangeContent<RestS, Char, "", ContentArray, false>
+    : ContentArray[number]
+  : "Char字符长度不可超过1";
+
+type TestStrOneRange = GetStrOneCharRangeContent<"123*912*112*020202*", "*">;
+
+/**
+ * 取模板字符串中指定的两个字符括住的内容，例取出 {与} 字符括住的内容： `Hello, {name}`，即name
+ */
+
+type GetStrTowCharRangeContent<
+  Str extends string,
+  OneChar extends string,
+  TowChar extends string,
+  DefaultStr extends string = "",
+  ContentArray extends string[] = [],
+  IsRange extends boolean = false
+> = [LengthOfString<OneChar>, LengthOfString<TowChar>] extends [1, 1]
+  ? Str extends `${infer S}${infer RestS}`
+    ? [S, IsRange] extends [OneChar, false]
+      ? GetStrTowCharRangeContent<RestS, OneChar,TowChar, "", ContentArray, true>
+      : [S, IsRange] extends [TowChar, true]
+      ? GetStrTowCharRangeContent<
+          RestS,
+          OneChar,
+          TowChar,
+          ``,
+          [DefaultStr, ...ContentArray],
+          false
+        >
+      : IsRange extends true
+      ? GetStrTowCharRangeContent<
+          RestS,
+          OneChar,
+          TowChar,
+          `${DefaultStr}${S}`,
+          ContentArray,
+          true
+        >
+      : GetStrTowCharRangeContent<RestS,OneChar,TowChar, "", ContentArray, false>
+    : ContentArray[number]
+  : "第一个或第二个字符的长度不可超过1";
+
+
+type TestStrTowRange = GetStrTowCharRangeContent<"Hello, {name}, My name is {myName}", "{", "}">; // name | myName
