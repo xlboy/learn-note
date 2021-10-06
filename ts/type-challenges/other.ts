@@ -28,3 +28,22 @@ type UtilGetUnionLength<
   : never;
 
 type Reu = UtilGetUnionLength<Test2>;
+
+/**
+ * 根据联合类型的长度 填充N个指定的子元素至数组
+ */
+
+type LocaleTypes = "zh_CN" | "zh_TW" | "en_US";
+
+type InUnionFillArrayItem<
+  FillItem,
+  Union,
+  FillArray extends FillItem[] = [],
+  C extends Union = Union
+> = [C] extends [never]
+  ? FillArray
+  : C extends C
+  ? InUnionFillArrayItem<FillItem, Exclude<Union, C>, [...FillArray, FillItem]>
+  : never;
+
+type TestResult = InUnionFillArrayItem<{ a: 1; c: 2 }, LocaleTypes>;
